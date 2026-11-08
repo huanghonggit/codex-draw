@@ -1,0 +1,29 @@
+{
+  "case": "product-reference",
+  "scenario": null,
+  "generated_at_utc": "2026-11-08T15:49:01.945419+00:00",
+  "generation_backend": "codex-image2 (legacy configured backend)",
+  "planner_and_inspector": "codex-draw",
+  "model": "gpt-image-2.6-sunburst",
+  "requested": {
+    "size": "1024x1024",
+    "format": "png",
+    "quality": "auto",
+    "max_attempts": 1
+  },
+  "actual": {
+    "bytes": 1370171,
+    "format": "png",
+    "has_transparency": false,
+    "height": 1024,
+    "width": 1024
+  },
+  "elapsed_seconds": 27.6,
+  "sha256": "0a8d501412195b827b97abf190590f3e4eb76bf6a49c39d7465e4354a19251ce",
+  "prompt": "生成一张无品牌商品摄影参考图：单只哑光鼠尾草绿陶瓷马克杯，圆润杯柄朝右，杯身干净无文字无标志，背景为均匀浅灰色，柔和棚拍光，三分之四视角，杯子居中，完整显示杯底及杯柄，真实陶瓷质感，正方形构图。",
+  "visual_review": {
+    "status": "pass",
+    "method": "AI visual inspection; not human certification",
+    "notes": "单只鼠尾草绿陶瓷杯，杯柄朝右，浅灰背景，无品牌文字，未见明显结构畸形。"
+  }
+}

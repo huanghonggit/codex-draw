@@ -1,0 +1,47 @@
+{
+  "case": "winter-product-loop",
+  "scenario": "product-loop",
+  "generated_at_utc": "2026-11-08T15:57:27.437247+00:00",
+  "generation_backend": "codex-image2 (legacy configured backend)",
+  "planner_and_inspector": "codex-draw",
+  "model": "gpt-image-2.6-sunburst",
+  "requested": {
+    "size": "1024x1024",
+    "format": "gif",
+    "quality": "auto",
+    "max_attempts": 1,
+    "frame_count": 9,
+    "frame_duration_ms": 200
+  },
+  "actual": {
+    "bytes": 664883,
+    "duration_ms": 1800,
+    "first_last_equal": false,
+    "format": "gif",
+    "frame_delays_ms": [
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200
+    ],
+    "frames": 9,
+    "height": 388,
+    "loop_count": 0,
+    "seam_note": "Pixel equality measures endpoints only; motion and identity require visual review.",
+    "width": 439
+  },
+  "elapsed_seconds": 120.6,
+  "sha256": "f4dea388ca64b14cc440596b3b5f5f8bc84a61c850f151212c3db796c91bd7f8",
+  "prompt": "固定镜头与商品标识，安排平缓的开合、轻微转动或悬浮动作；结束时完整恢复初始位置与状态，形成循环。\n\n用户任务（以用户明确要求为准）：\n把参考商品海报制作成克制自然的无缝循环广告。固定相机、杯子、杯柄、桌面、松枝与背景构图，陶瓷杯形状颜色完全不变。仅让杯口细微热气缓缓向上飘动，窗外少量柔焦雪花轻轻移动；无推拉镜头，无变形，无新增文字。动作平滑，周期结束回到起始状态，首帧和末帧一致，设置无限循环。\n",
+  "visual_review": {
+    "status": "partial",
+    "method": "AI inspection of all 9 extracted frames plus decoded pixel comparison; dynamic playback not certified",
+    "notes": "真实多帧 GIF，9 个不同帧、每帧 200ms、无限循环。实际 439×388，未满足请求的 1024×1024。抽帧检查显示主体与构图大致稳定，但有蒸汽烟圈和杯内沿明暗变化。末帧蒸汽与首帧不同，首尾像素不相等，无缝循环未达标；未完成动态播放人工验收。"
+  },
+  "reference": "winter-product.png"
+}

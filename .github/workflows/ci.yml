@@ -25,6 +25,8 @@ jobs:
         run: go test -race ./codex-draw/src
       - name: Registry validation
         run: go run ./codex-draw/src validate
+      - name: Published example integrity (offline)
+        run: python scripts/check_examples.py
   package:
     needs: test
     runs-on: ubuntu-latest

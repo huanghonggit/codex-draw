@@ -1,0 +1,41 @@
+[
+  {
+    "id": "product-reference",
+    "title": "商品参考图",
+    "scenario": null,
+    "format": "png",
+    "model": "auto"
+  },
+  {
+    "id": "winter-product",
+    "title": "冬季商品海报",
+    "scenario": "product-seasonal",
+    "format": "png",
+    "model": "auto",
+    "reference": "product-reference.png"
+  },
+  {
+    "id": "reading-ui",
+    "title": "阅读应用视觉稿",
+    "scenario": "ui-mockup",
+    "format": "png",
+    "model": "auto"
+  },
+  {
+    "id": "fox-storyboard",
+    "title": "角色四格分镜",
+    "scenario": "storyboard",
+    "format": "png",
+    "model": "auto"
+  },
+  {
+    "id": "winter-product-loop",
+    "title": "商品循环 GIF",
+    "scenario": "product-loop",
+    "format": "gif",
+    "model": "gpt-image-2.6-sunburst",
+    "reference": "winter-product.png",
+    "frames": 9,
+    "frame_duration_ms": 200
+  }
+]

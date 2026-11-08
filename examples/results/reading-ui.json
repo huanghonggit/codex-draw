@@ -1,0 +1,29 @@
+{
+  "case": "reading-ui",
+  "scenario": "ui-mockup",
+  "generated_at_utc": "2026-11-08T15:50:52.771699+00:00",
+  "generation_backend": "codex-image2 (legacy configured backend)",
+  "planner_and_inspector": "codex-draw",
+  "model": "gpt-image-2.6-sunburst",
+  "requested": {
+    "size": "1024x1024",
+    "format": "png",
+    "quality": "auto",
+    "max_attempts": 1
+  },
+  "actual": {
+    "bytes": 1235634,
+    "format": "png",
+    "has_transparency": false,
+    "height": 1024,
+    "width": 1024
+  },
+  "elapsed_seconds": 115.2,
+  "sha256": "cd63ce72f3eaa2d351c3e2be6968d1423bb96cc5cc7b4c5ed03eec65c180f355",
+  "prompt": "制作清晰可读的界面视觉参考。按任务提供的模块、文案、导航和视觉层级排版，保留一致间距与组件风格。\n\n用户任务（以用户明确要求为准）：\n设计一张精致的中文阅读应用手机首页视觉稿。单个完整屏幕居中展示在浅米色背景上，无设备外壳。米白与森林绿配色，圆角卡片，清晰中文字体，大量留白。顶部标题精确写“今日阅读”，下方小字“每天读一点”。中间一张大卡片包含抽象植物封面、书名“森林来信”、进度“已读 36%”及按钮“继续阅读”。底部导航精确写“首页”“书架”“我的”。只展示这几个模块，不添加多余文字。\n",
+  "visual_review": {
+    "status": "pass",
+    "method": "AI visual inspection; not human certification",
+    "notes": "八处指定中文均逐字匹配，未见额外文字；单页布局、配色与卡片层级符合简报。"
+  }
+}

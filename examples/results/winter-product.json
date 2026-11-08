@@ -1,0 +1,30 @@
+{
+  "case": "winter-product",
+  "scenario": "product-seasonal",
+  "generated_at_utc": "2026-11-08T15:52:54.003363+00:00",
+  "generation_backend": "codex-image2 (legacy configured backend)",
+  "planner_and_inspector": "codex-draw",
+  "model": "gpt-image-2.6-sunburst",
+  "requested": {
+    "size": "1024x1024",
+    "format": "png",
+    "quality": "auto",
+    "max_attempts": 1
+  },
+  "actual": {
+    "bytes": 2416312,
+    "format": "png",
+    "has_transparency": false,
+    "height": 1024,
+    "width": 1024
+  },
+  "elapsed_seconds": 69.3,
+  "sha256": "7332a89eee4802465b5d79ae4210c7880f380e100306974146646bd444707ea9",
+  "prompt": "保留商品几何外观、包装、商标、文字及材质；按需求改变布景、道具和光照。商品为主视觉，避免添加未提供的品牌宣传语。\n\n用户任务（以用户明确要求为准）：\n为虚构品牌制作冬季陶瓷杯广告摄影，不出现文字和标志。画面中心是一只哑光鼠尾草绿陶瓷杯，圆润杯柄朝右，放在浅橡木桌面；杯口有细细热气。背景是温暖的窗边，窗外雪景柔焦，左侧有少量松枝。自然柔光、真实陶瓷质感、杂志广告品质、方形构图。杯子占画面中央约一半，边缘清晰，留有呼吸空间。\n",
+  "visual_review": {
+    "status": "partial",
+    "method": "AI visual inspection; not human certification",
+    "notes": "冬季窗边、松枝、蒸汽与无文字要求符合。与参考图并排检查：鼠尾草绿色、哑光质感和向右杯柄基本保留，但杯身稍宽矮，杯缘及杯柄略厚，不能认定严格商品形状保持。蒸汽根部与液面衔接略生硬，织物阴影略模糊。"
+  },
+  "reference": "product-reference.png"
+}
