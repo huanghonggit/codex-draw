@@ -1,244 +1,118 @@
-# Codex Image2 Skill
+# Codex Draw
 
-让 Codex 通过自定义 API 地址和密钥生成或编辑图片。服务商的模型列表中有 `gpt-image-2.5` 时优先使用，否则使用 `gpt-image-2`。
+[![test-and-release](https://github.com/huanghonggit/codex-draw/actions/workflows/ci.yml/badge.svg)](https://github.com/huanghonggit/codex-draw/actions/workflows/ci.yml)
 
-## 为什么做这个 Skill
+一个可扩展的 Codex 绘图 skill：**场景包 + 模型能力注册表 + 原生 Go CLI + 输出验收**。
 
-最近使用 API 中转服务时，我发现不少中转站已经把 `gpt-image-2` 从常规模型列表中移出，导致 Codex 无法像以前一样直接发现并调用生图模型。
+基于 [fengfengzhidao/codex-image2-skill](https://github.com/fengfengzhidao/codex-image2-skill) 扩展，保留本地配置页、系统加密凭据、生成/编辑/批量调用。新增 12 个可独立维护的场景包，覆盖所引文章的 10 个玩法。
 
-于是我写了这个 Skill。原理很简单：
+**边界**：首版执行 OpenAI-compatible Images 协议。模型别名不代表官方发布或统一能力；GIF 是可选的服务商扩展。SVG 图标输出设计交接说明，尚无原生 SVG 生成接口。没有自动视频生成、前端代码生成或精灵切片功能。
 
-1. 从本地保存的配置读取 API 地址和密钥（兼容旧环境变量）；
-2. 直接调用 OpenAI 兼容的图片生成或编辑接口；
-3. 将返回的图片保存到项目中；
-4. 让 Codex 检查图片并展示最终结果。
+## 安装
 
-仓库已经提供 Windows 和 macOS 的原生可执行文件。普通用户不需要安装 Python、Node.js、Go 或其他依赖。
+从 [Releases](https://github.com/huanghonggit/codex-draw/releases) 下载 `codex-draw-v1.0.0.zip` 及 `SHA256SUMS`。压缩包含 Windows x64/ARM64、macOS Intel/Apple Silicon 四个原生程序，普通使用无需 Python、Node 或 Go。
 
-## 功能
-
-- 文生图
-- 单图或多图编辑
-- 可选 PNG Mask 局部编辑
-- JSONL 并发批量生图
-- 支持 Base64 和 URL 两种图片响应
-- 自动重试网络超时、429、5xx 和 524 错误
-- 输出文件覆盖保护
-- API Key 脱敏，不写入 Skill 或日志
-- 中文本地配置页：填写、保存、检测，无需配置环境变量或重启 Codex
-- Windows 当前用户加密保存密钥；macOS 使用系统钥匙串
-- 自动优先选择服务商列出的 `gpt-image-2.5`，兼容 `gpt-image-2` 和显式指定模型
-- 内置 Windows x64/ARM64 与 macOS Intel/Apple Silicon 可执行文件
-
-## 如何使用
-
-这个项目包含：
-
-- 开源项目：**codex-image2-skill**
-- Skill 名称：**codex-image2**
-
-### 1. 安装 Skill
-
-最简单的方式是把本项目地址发给 Codex，让它帮你安装：
-
-```text
-请帮我安装这个 Skill：
-https://github.com/fengfengzhidao/codex-image2-skill
-```
-
-也可以手动安装。
-
-Windows PowerShell：
+Windows 示例（路径按下载位置调整；目标目录应尚不存在）：
 
 ```powershell
-git clone https://github.com/fengfengzhidao/codex-image2-skill.git
-Copy-Item codex-image2-skill\codex-image2 "$HOME\.codex\skills\codex-image2" -Recurse
+Get-FileHash .\codex-draw-v1.0.0.zip -Algorithm SHA256
+# 与 SHA256SUMS 核对后解压到一个空目录
+Expand-Archive .\codex-draw-v1.0.0.zip -DestinationPath .\codex-draw-install
+Copy-Item -LiteralPath .\codex-draw-install\codex-draw -Destination "$env:USERPROFILE\.codex\skills\codex-draw" -Recurse
+$cli = "$env:USERPROFILE\.codex\skills\codex-draw\bin\codex-draw-windows-amd64.exe"
+& $cli version
+& $cli validate
 ```
 
-macOS / Linux：
+macOS：解压后将其中 `codex-draw` 目录放入 `~/.codex/skills/`；必要时给对应二进制加执行权限。二进制没有 Apple 公证或 Windows 代码签名；只使用自己核对来源及校验和的发行包。源码 checkout 不含预编译程序，维护者构建方法见后文。
 
-```bash
-git clone https://github.com/fengfengzhidao/codex-image2-skill.git
-cp -R codex-image2-skill/codex-image2 ~/.codex/skills/codex-image2
-```
+在新会话中使用 `$codex-draw`。如果技能列表未刷新，重开会话。旧 `codex-image2` 可以继续保留，显式调用新的名称避免两者混淆。
 
-### 2. 配置 API 地址和密钥
-
-安装后，直接对 Codex 说：
-
-```text
-使用 $codex-image2，帮我配置图片服务。
-```
-
-Codex 会打开一个**仅在本机运行的中文配置页**：
-
-1. 填写服务商提供的 **API 地址** 和 **API 密钥**。
-2. 点击 **保存配置**，程序先检查当前密钥的模型权限，通过后保存。
-3. 返回 Codex，告诉它“已保存”，即可开始生图。
-
-**无需设置环境变量，也无需因为保存配置而重启 Codex。** 首次安装 Skill 后若尚未被识别，仍可能需要重新打开 Codex。
-
-地址可填写服务根地址、以 `/v1` 结尾的地址或完整图片接口地址，程序会自动整理。请使用 HTTPS；本机调试可使用 HTTP 回环地址。
-
-首次使用的默认地址为 `https://apinebula.ai/v1`。已经保存的自定义地址会保留。
-
-已保存密钥后，点击 **显示** 可以在本地页面查看；点击 **隐藏** 会清空展示的已保存密钥，显示 30 秒后或切换离开页面时也会自动隐藏。密钥不进入 Codex 聊天或浏览器持久存储。
-
-- **保存配置**：先请求当前密钥的模型列表。包含 `gpt-image-2` 或 `gpt-image-2.5` 时正常保存；没有这两个模型时先警告，暂不覆盖原配置。模型列表隐藏或不兼容也会提示未确认权限；确认服务支持生图后，可由用户点击 **仍然保存**。密钥鉴权失败、网络、限流或服务错误则不保存，需修正后重试。
-- **检测连接**：只请求模型列表，不发起生图请求。页面显示当前密钥能访问的模型名称和数量，突出显示生图模型及自动选择结果；修改地址或密钥后会清除旧列表。部分中转站隐藏图片模型，模型列表列出也不代表图片接口一定可用。
-- **测试生图（可能计费）**：需单独确认，生成 1 张低质量图片；不自动重试，不自动保存当前填写的配置。
-- 密钥直接输入本地页面，请勿发给 Codex 聊天。保存与检测时会向你填写的 API 地址请求模型列表；只有单独确认生图测试或正式生图时才请求生成图片。
-
-也可以双击 Skill 文件夹内的 `配置图片服务.cmd`（Windows）或 `配置图片服务.command`（macOS）。macOS 如未保留执行权限，可让 Codex 帮你打开配置页。
-
-配置页会在 15 分钟后自动失效；点击“完成配置，关闭本地服务”可提前结束。链接失效后，让 Codex 重新打开即可。
-
-### 3. 指定 Skill 生图
-
-配置保存后，在请求中指定 `$codex-image2` 即可：
-
-```text
-使用 $codex-image2 生成一张图片：
-一只戴着宇航员头盔的橘猫站在月球表面，远处可以看到地球，电影感灯光。
-```
-
-![使用 Codex Image2 生图](http://image.fengfengzhidao.com/fengfeng_110920260715224141.png?key=fengfengbuzhidao)
-
-改图示例：
-
-```text
-使用 $codex-image2 修改这张图片：
-只把背景替换成雪山，人物、服装、姿势和构图保持不变。
-```
-
-## CLI 用法
-
-通常直接在 Codex 中指定 Skill 即可，不需要手动执行 CLI。下面的命令适合调试或自动化。
-
-选择与你的系统匹配的文件：
-
-| 系统 | 可执行文件 |
-| --- | --- |
-| Windows x64 | `codex-image2/bin/codex-image2-windows-amd64.exe` |
-| Windows ARM64 | `codex-image2/bin/codex-image2-windows-arm64.exe` |
-| macOS Intel | `codex-image2/bin/codex-image2-darwin-amd64` |
-| macOS Apple Silicon | `codex-image2/bin/codex-image2-darwin-arm64` |
-
-macOS 如果提示没有执行权限，运行：
-
-```bash
-chmod +x codex-image2/bin/codex-image2-darwin-*
-```
-
-打开配置页、查看状态：
+## 配置与迁移
 
 ```powershell
-& "codex-image2/bin/codex-image2-windows-amd64.exe" configure
-& "codex-image2/bin/codex-image2-windows-amd64.exe" status
+& $cli configure
+& $cli status
+# 仅在希望沿用原 codex-image2 服务时执行：
+& $cli import-image2
 ```
 
-`configure` 会启动独立的本地进程并立即返回，不占用 Codex 的执行等待。若不能自动打开浏览器，可使用返回的 `url`；`configure --no-browser` 只返回链接。无参数运行可执行文件也会打开配置页。`status` 只输出本地配置状态、来源、地址及路径，不输出密钥，也不验证远端 API 权限。
+配置页由用户输入 API 地址和密钥；不要将密钥发到聊天。Windows 使用当前用户 DPAPI，macOS 使用 Keychain。配置保存在操作系统用户配置目录下的 `codex-draw/config.json`。新配置优先于兼容的 `CODEX_API_URL/CODEX_API_KEY` 环境变量。默认 API 地址为 `https://api.openai.com/v1`，第三方服务需自行配置。
 
-模型默认是 `auto`：以当前服务、当前密钥查询 `/v1/models`，发现 `gpt-image-2.5` 就优先使用；列表隐藏、不兼容、查询失败或未列出 2.5 时继续直接使用 `gpt-image-2`。查询最多等待 8 秒，同一批量任务复用查询结果。模型列表列出只代表服务商声明支持，实际可用性仍以图片接口为准。
+迁移由程序完成解密与重新加密，不输出密钥、不删除旧配置、拒绝覆盖已有新配置；迁移本身不验证远端权限。首次配置与迁移二选一即可。模型列表检测不计费生图；页面内的生图测试需用户明确同意，可能计费。
 
-显式传入 `--model gpt-image-2` 或 `--model gpt-image-2.5` 可以固定模型，跳过自动选择。批量任务每行的 `model` 也保留优先级。CLI 输出返回实际使用的模型；`--dry-run` 保持零网络请求，示例载荷使用 `gpt-image-2`，并以 `model_selection: auto` 标记未查询模型可用性。
-
-生成图片：
+## 从需求到交付
 
 ```powershell
-& "codex-image2/bin/codex-image2-windows-amd64.exe" generate `
-  --prompt "A tiny blue nebula inside a glass bottle" `
-  --quality auto `
-  --out "output/imagegen/nebula.png"
+& $cli catalog
+& $cli plan --scenario ui-mockup --brief "阅读应用首页，展示正在阅读、书架和今日阅读时长"
+& $cli draw --scenario ui-mockup --brief-file .\brief.txt --out .\output\draw\reading.png
+& $cli draw --scenario localized-edit --image .\original.png --mask .\mask.png --brief "仅将指定区域换成深蓝色，保留其余内容" --out .\output\draw\edited.png
+& $cli inspect .\output\draw\edited.png
 ```
 
-编辑图片：
+`plan` 始终离线，不读取凭据。它输出最终提示词、模型候选、路径和验收清单；可重定向保存为本地 JSON。缺少参考图、未知模型或不支持的能力在请求前报错。
 
-```powershell
-& "codex-image2/bin/codex-image2-windows-amd64.exe" edit `
-  --image "input.png" `
-  --prompt "Replace only the background with a warm studio backdrop" `
-  --out "output/imagegen/edited.png"
-```
+`draw` 会发送可能计费的请求。自动模型选择遵循注册表优先级并尝试匹配服务商列表，列表失败时可以回退到兼容候选；并不保证远端支持。用户也可明确指定已注册的 `--model`。默认仅 1 次提交，避免超时后重复计费；显式 `--max-attempts` 最多 5 次。
 
-批量任务格式和完整工作流请查看 [`codex-image2/SKILL.md`](codex-image2/SKILL.md) 和 [`batch-format.md`](codex-image2/references/batch-format.md)。
+生成结果 JSON 区分 `requested_size/requested_frame_count` 与 `actual`。实际尺寸不同、帧数不同、未无限循环或首尾不同会给出 `warnings`。图像无法完整解码或格式与后缀不一致则拒绝保存。已有文件默认拒绝覆盖。多个输出在写入前全部解码验证，但磁盘写入不是跨文件事务，磁盘故障仍可能产生部分输出。
 
-## 从源码构建
+### 场景清单
 
-普通用户不需要执行这一步。开发者安装 Go 后，可以运行：
-
-```powershell
-$env:CGO_ENABLED = "0"
-$env:GOOS = "windows"
-$env:GOARCH = "amd64"
-go build -trimpath -ldflags "-s -w" -o codex-image2/bin/codex-image2-windows-amd64.exe ./codex-image2/src
-```
-
-源码只使用 Go 标准库。请构建整个 `src` 包，配置页 HTML 会自动嵌入可执行文件。
-
-```powershell
-go test ./codex-image2/src
-go vet ./codex-image2/src
-```
-
-## 配置位置与旧版兼容
-
-本地配置与 Skill 安装目录、当前项目分开，更新 Skill 不会覆盖配置：
-
-| 系统 | 配置文件 | 密钥存储 |
+| 场景 ID | 应用 | 对应文章玩法 |
 | --- | --- | --- |
-| Windows | `%APPDATA%\codex-image2\config.json` | 当前 Windows 用户的 DPAPI 加密数据 |
-| macOS | `~/Library/Application Support/codex-image2/config.json` | 登录钥匙串，服务名 `codex-image2`；配置文件只保存引用 |
+| character-loop | 角色循环表情 | 1 |
+| game-sprites | 游戏动作素材 | 2 |
+| character-sheet | 多角度角色设定 | 3 |
+| product-seasonal | 商品场景海报 | 4 |
+| product-loop | 商品循环广告 | 4 |
+| vector-icons | SVG 图标设计与交接 | 5 |
+| localized-edit | 圈选与局部修改 | 6 |
+| sketch-render | 草图渲染 | 7 |
+| ui-mockup | 应用与网页视觉稿 | 8 |
+| knowledge-diagram | 知识过程与结构图解 | 9 |
+| image-localization | 图片文字翻译 | 9 |
+| storyboard | 四格漫画与分镜 | 10 |
 
-优先级：**本地完整配置 → 旧环境变量**。本地配置存在时，旧环境变量不覆盖它；配置损坏或密钥不可读时，程序会提示修复，不会偷偷切换服务。切换 API 地址时需要重新输入对应密钥，避免混用不同服务的配置。
+商品静态海报与动态图、知识图解与图片翻译分别拆包，便于单独扩展。图解必须核对专业事实；UI 输出是视觉稿；游戏动作素材还需切片、锚点和引擎验证。
 
-旧用户可继续使用 `CODEX_API_URL` 与 `CODEX_API_KEY`。未配置本地文件时，API 地址默认使用 `https://apinebula.ai/v1`。通过配置页保存后即可迁移到本地配置。
+### GIF
 
-Linux 暂未提供预编译文件及本地凭据存储，源码构建后仍可使用旧环境变量。macOS 钥匙串可能出现系统授权或解锁提示；因运行中的任务可能仍在使用旧配置，更新密钥时会保留旧钥匙串条目，可在系统“钥匙串访问”中按服务名清理不再使用的条目。
-
-## 超简单的方式
-
-如果希望直接通过网站生图，也可以使用我开发的网站：
-
-### [https://ffzd.ai/](https://ffzd.ai/)
-
-支持文生图和图生图，打开网页即可使用。
-
-![ffzd.ai](https://image.fengfengzhidao.com/rj_102520260706151233013.png)
-
-## 常见问题
-
-### 配置后仍提示没有 API Key
-
-让 Codex 运行 `status` 检查配置来源。新配置页保存后下一次调用即生效；如果提示凭据无法读取，请重新打开配置页保存，macOS 用户也可检查钥匙串是否已解锁。只有仍使用旧环境变量的用户，修改变量后可能需要完全退出并重新启动 Codex。
-
-### 页面提示链接失效，或者刷新后无法连接
-
-配置页有效期为 15 分钟，手动结束服务或退出系统后也会失效。让 Codex 再运行一次 `configure` 即可。页面刷新不会丢失已保存的配置；未保存的密钥需要重新输入。
-
-### 接口返回 524 或超时
-
-这通常表示中转服务的图片生成耗时超过了网关限制。可以尝试降低质量、使用 `1024x1024`、减少批量并发，或稍后重试。
-
-### 是否支持所有中转站
-
-中转服务需要兼容以下接口，并提供 `gpt-image-2` 或 `gpt-image-2.5` 模型：
-
-```text
-POST /v1/images/generations
-POST /v1/images/edits
+```powershell
+& $cli draw --scenario character-loop --image .\character.png --brief "固定镜头与背景，眨眼并微笑，然后回到初始姿态" --model gpt-image-2.6-sunburst --allow-experimental --frame-count 24 --frame-duration-ms 120 --timeout 720 --out .\output\draw\loop.gif
 ```
 
-不同服务的参数支持和稳定性可能存在差异。
+仅在已确认服务支持或明确接受探索性尝试时使用 `--allow-experimental`。请求帧数不等于实际帧数，首尾像素相同也不等于动作自然。尺寸、身份、背景稳定性和无缝循环都需查看实际结果。首版不内置补帧、光流或自动表情合成。
 
-## 安全说明
+### SVG
 
-- 不要把真实 API Key 提交到 GitHub。
-- 不要把 Key 写进 Skill、提示词、截图或聊天消息。
-- 建议为不同服务使用独立密钥，并定期轮换。
-- 本地配置页仅监听 `127.0.0.1` 随机端口，使用临时访问凭据和来源校验，不加载外部脚本；密钥不进入页面 URL、浏览器持久存储、命令参数或程序日志。
-- Windows 使用当前用户 DPAPI 加密；macOS 使用系统钥匙串，不会将密钥明文写入项目或 Skill 文件。请勿把配置文件当作跨电脑通用备份；换电脑或系统用户后应重新配置。
+`plan --scenario vector-icons --brief "六种天气图标，统一描边与 viewBox"` 输出交接说明。真实 `draw` 会明确报未实现，不调用生图接口。可由具备矢量/代码输出能力的工具继续完成；不得把位图改名为 SVG。
 
-## License
+## 扩展
 
-[MIT](LICENSE)
+- **新场景**：新增 `registry/scenarios/<id>/{scenario.json,prompt.md,checklist.md}`；无需改主流程。
+- **新模型**：兼容现有请求/响应协议时，新增 `registry/models/<id>.json`；能力、优先级及实验格式显式声明。
+- **新服务商**：使用相同 Images 协议时通过配置页切换地址；首版一次配置一个服务，不管理多账户池。
+- **新协议或格式**：需增加代码适配与解码器，并补契约测试；仅添加模型名不能接入任意接口。
+- **外部扩展目录**：设置 `CODEX_DRAW_REGISTRY` 指向完整注册表，升级安装包时无需改动该目录；首版是替换语义，不是多目录合并。
+
+详见 [扩展协议](codex-draw/references/extensions.md)、[完整方案](docs/PLAN.md)、[来源和场景映射](docs/SOURCES.md)。新增后运行 `validate` 和 `plan`。JSON Schema 随包提供，运行时不依赖外部库。
+
+## 开发、测试和发布
+
+维护者需要 Go 1.22+；打包脚本需要 Python 3。没有第三方 Go 依赖。
+
+```powershell
+go test ./codex-draw/src
+go vet ./codex-draw/src
+go run ./codex-draw/src validate
+python scripts/build.py
+```
+
+Linux CI 另跑 `go test -race`；Windows CI 运行临时目录下的合成凭据加密集成测试。全部网络测试使用本地 mock 服务，不使用真实账户。打包只包含白名单文件，不包含配置、密钥、个人照片、生成素材或源码测试。
+
+更新 VERSION 与 CHANGELOG，提交后推送对应 `vX.Y.Z` tag。CI 先测试再交叉构建四平台原生程序，生成 ZIP + SHA256SUMS 并发布 GitHub Release。macOS/ARM64 在首版是交叉编译验证，真实系统凭据交互仍需当地用户验收。
+
+## 许可证
+
+MIT，保留上游版权声明。参见 [LICENSE](LICENSE) 和 [NOTICE.md](NOTICE.md)。文章只用于场景分类与工作流启发，本仓库未打包文章图片或整篇正文。

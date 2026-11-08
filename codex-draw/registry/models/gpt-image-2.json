@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "gpt-image-2",
+  "adapter": "openai-images-v1",
+  "operations": [
+    "generate",
+    "edit"
+  ],
+  "formats": [
+    "png",
+    "jpeg"
+  ],
+  "experimental_formats": [],
+  "priority": 40,
+  "notes": "Provider model alias; availability and actual behavior depend on the configured service. GIF fields are a provider extension, not an official capability claim."
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "id": "character-loop",
+  "title": "角色循环表情",
+  "description": "角色循环表情：参考图、动作顺序、需要固定的外观与背景、时长",
+  "operation": "edit",
+  "default_format": "gif",
+  "reference_required": true,
+  "article_cases": [
+    1
+  ],
+  "inputs": [
+    "参考图",
+    "动作顺序",
+    "需要固定的外观与背景",
+    "时长"
+  ]
+}

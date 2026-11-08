@@ -1,6 +1,12 @@
-__pycache__/
-*.py[cod]
-.DS_Store
+# Generated native binaries are published as release assets.
+**/bin/
+dist/
 output/
-tmp/
-work/
+outputs/
+*.log
+*.tmp
+.env
+.env.*
+config.json
+*credentials*
+__pycache__/

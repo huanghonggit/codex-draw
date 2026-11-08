@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "id": "ui-mockup",
+  "title": "应用与网页视觉稿",
+  "description": "应用与网页视觉稿：用户与页面用途、模块列表、目标屏幕比例、精确文案",
+  "operation": "generate",
+  "default_format": "png",
+  "reference_required": false,
+  "article_cases": [
+    8
+  ],
+  "inputs": [
+    "用户与页面用途",
+    "模块列表",
+    "目标屏幕比例",
+    "精确文案"
+  ]
+}

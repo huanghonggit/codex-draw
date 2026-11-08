@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "id": "product-seasonal",
+  "title": "商品场景海报",
+  "description": "商品场景海报：商品原图、季节或主题、品牌与标签原文、构图比例",
+  "operation": "edit",
+  "default_format": "png",
+  "reference_required": true,
+  "article_cases": [
+    4
+  ],
+  "inputs": [
+    "商品原图",
+    "季节或主题",
+    "品牌与标签原文",
+    "构图比例"
+  ]
+}

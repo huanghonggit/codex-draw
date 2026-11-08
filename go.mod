@@ -1,3 +1,3 @@
-module github.com/fengfengzhidao/codex-image2-skill
+module github.com/huanghonggit/codex-draw
 
 go 1.22

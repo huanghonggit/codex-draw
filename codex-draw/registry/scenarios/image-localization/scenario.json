@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "id": "image-localization",
+  "title": "图片文字翻译",
+  "description": "图片文字翻译：原图、目标语言、术语表、需保留的内容",
+  "operation": "edit",
+  "default_format": "png",
+  "reference_required": true,
+  "article_cases": [
+    9
+  ],
+  "inputs": [
+    "原图",
+    "目标语言",
+    "术语表",
+    "需保留的内容"
+  ]
+}

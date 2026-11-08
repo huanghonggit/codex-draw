@@ -1,0 +1,6 @@
+interface:
+  display_name: "Codex Draw"
+  short_description: "可扩展绘图工作流：角色、商品、局部编辑、图解与条件支持的循环动图"
+  default_prompt: "使用 $codex-draw，根据我的需求选择场景与模型，检查输入并生成可验收的图片。"
+policy:
+  allow_implicit_invocation: true

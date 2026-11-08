@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "id": "character-sheet",
+  "title": "多角度角色设定",
+  "description": "多角度角色设定：角色参考、视角列表、不可变特征",
+  "operation": "edit",
+  "default_format": "png",
+  "reference_required": true,
+  "article_cases": [
+    3
+  ],
+  "inputs": [
+    "角色参考",
+    "视角列表",
+    "不可变特征"
+  ]
+}

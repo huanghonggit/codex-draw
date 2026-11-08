@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "id": "sketch-render",
+  "title": "草图渲染",
+  "description": "草图渲染：草图、空间布局、材质、光照与风格",
+  "operation": "edit",
+  "default_format": "png",
+  "reference_required": true,
+  "article_cases": [
+    7
+  ],
+  "inputs": [
+    "草图",
+    "空间布局",
+    "材质",
+    "光照与风格"
+  ]
+}

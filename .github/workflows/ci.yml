@@ -1,0 +1,53 @@
+name: test-and-release
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Unit and integration tests (mock services only)
+        run: go test -count=1 ./codex-draw/src
+      - run: go vet ./codex-draw/src
+      - name: Race detector
+        if: runner.os == 'Linux'
+        run: go test -race ./codex-draw/src
+      - name: Registry validation
+        run: go run ./codex-draw/src validate
+  package:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/build.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: codex-draw-package
+          path: dist/*
+      - name: Publish tagged release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          test "$TAG" = "v$(cat VERSION)"
+          gh release create "$TAG" dist/* --title "Codex Draw $TAG" --notes-file CHANGELOG.md --verify-tag

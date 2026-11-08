@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "id": "storyboard",
+  "title": "四格漫画与分镜",
+  "description": "四格漫画与分镜：角色设定、按顺序列出的情节、画风、对白原文",
+  "operation": "generate",
+  "default_format": "png",
+  "reference_required": false,
+  "article_cases": [
+    10
+  ],
+  "inputs": [
+    "角色设定",
+    "按顺序列出的情节",
+    "画风",
+    "对白原文"
+  ]
+}

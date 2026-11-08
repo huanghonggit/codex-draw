@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "id": "localized-edit",
+  "title": "圈选与局部修改",
+  "description": "圈选与局部修改：干净原图、标记图或 PNG mask、局部改动、禁止改动的区域",
+  "operation": "edit",
+  "default_format": "png",
+  "reference_required": true,
+  "article_cases": [
+    6
+  ],
+  "inputs": [
+    "干净原图",
+    "标记图或 PNG mask",
+    "局部改动",
+    "禁止改动的区域"
+  ]
+}

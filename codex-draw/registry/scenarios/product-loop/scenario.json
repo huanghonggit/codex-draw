@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "id": "product-loop",
+  "title": "商品循环广告",
+  "description": "商品循环广告：商品原图、单一动作、锁定细节、时长",
+  "operation": "edit",
+  "default_format": "gif",
+  "reference_required": true,
+  "article_cases": [
+    4
+  ],
+  "inputs": [
+    "商品原图",
+    "单一动作",
+    "锁定细节",
+    "时长"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "id": "vector-icons",
+  "title": "SVG 图标设计与交接",
+  "description": "SVG 图标设计与交接：图标清单、viewBox、描边与圆角、颜色",
+  "operation": "handoff",
+  "default_format": "svg",
+  "reference_required": false,
+  "article_cases": [
+    5
+  ],
+  "inputs": [
+    "图标清单",
+    "viewBox",
+    "描边与圆角",
+    "颜色"
+  ]
+}

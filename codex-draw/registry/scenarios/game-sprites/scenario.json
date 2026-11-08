@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "id": "game-sprites",
+  "title": "游戏动作素材",
+  "description": "游戏动作素材：角色参考、动作与朝向、帧格尺寸、调色板",
+  "operation": "edit",
+  "default_format": "png",
+  "reference_required": true,
+  "article_cases": [
+    2
+  ],
+  "inputs": [
+    "角色参考",
+    "动作与朝向",
+    "帧格尺寸",
+    "调色板"
+  ]
+}

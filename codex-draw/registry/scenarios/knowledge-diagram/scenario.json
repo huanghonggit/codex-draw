@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "id": "knowledge-diagram",
+  "title": "知识过程与结构图解",
+  "description": "知识过程与结构图解：事实依据、步骤或结构、箭头关系、精确术语",
+  "operation": "generate",
+  "default_format": "png",
+  "reference_required": false,
+  "article_cases": [
+    9
+  ],
+  "inputs": [
+    "事实依据",
+    "步骤或结构",
+    "箭头关系",
+    "精确术语"
+  ]
+}
